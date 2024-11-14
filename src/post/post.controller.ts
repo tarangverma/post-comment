@@ -1,35 +1,45 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { CreatePostDto } from 'src/posts/dto/create-post.dto';
-import { UpdatePostDto } from 'src/posts/dto/update-post.dto';
-import { PostsService } from 'src/posts/posts.service';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Put, Delete } from '@nestjs/common';
+import { PostService } from './posts.service';
+import { CreatePostDto } from './dto/create-post.dto';
+import { CreateCommentDto } from './dto/create-comment.dto';
 
-@Controller('post')
+@Controller('posts')
 export class PostController {
-    constructor(private readonly postService: PostsService) {}
-    
-    @Get()
-    findAll() {
-        return this.postService.findAll();
-    }
+  constructor(private readonly postService: PostService) {}
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.postService.findOne(id);
-    }
+  @Post()
+  createPost(@Body() createPostDto: CreatePostDto) {
+    return this.postService.createPost(createPostDto);
+  }
 
-    @Post()
-    create(@Body() CreatePostDto: CreatePostDto){
-        return this.postService.create(CreatePostDto);
-    }
+  @Get()
+  findAllPosts() {
+    return this.postService.findAllPosts();
+  }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() UpdatePostDto: UpdatePostDto) {
-        return this.postService.update(id, UpdatePostDto);
-    }
+  @Get(':id')
+  findOnePost(@Param('id', ParseIntPipe) id: number) {
+    return this.postService.findOnePost(id);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') id: string){
-        return this.postService.remove(id);
-    }
+  @Post(':postId/comments')
+  addComment(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    return this.postService.addComment(postId, createCommentDto);
+  }
 
+  @Put(':id')
+  updatePost(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePostDto: CreatePostDto,
+  ) {
+    return this.postService.updatePost(id, updatePostDto);
+  }
+
+  @Delete(':id')
+  deletePost(@Param('id', ParseIntPipe) id: number) {
+    return this.postService.deletePost(id);
+  }
 }
