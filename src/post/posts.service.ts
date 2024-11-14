@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Comment } from './entities/comment.entity';
+import { LogMethod } from '../decorators/log-method.decorator';
 
 @Injectable()
 export class PostService {
@@ -14,19 +19,31 @@ export class PostService {
   ) {}
 
   // Create a new post
-  async createPost(createPostDto: CreatePostDto): Promise<Post> {
-    const post = this.postRepository.create(createPostDto);
+  @LogMethod()
+  async createPost(
+    createPostDto: CreatePostDto,
+    userId: string,
+  ): Promise<Post> {
+    const post = this.postRepository.create({
+      ...createPostDto,
+      userId,
+    });
     return this.postRepository.save(post);
   }
 
   // Retrieve all posts
+  @LogMethod()
   async findAllPosts(): Promise<Post[]> {
     return this.postRepository.find({ relations: ['comments'] });
   }
 
   // Retrieve a single post by ID
-  async findOnePost(id: number): Promise<Post> {
-    const post = await this.postRepository.findOne({ where: { id }, relations: ['comments'] });
+  @LogMethod()
+  async findOnePost(id: string): Promise<Post> {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['comments'],
+    });
     if (!post) {
       throw new NotFoundException('Post not found');
     }
@@ -34,21 +51,44 @@ export class PostService {
   }
 
   // Add a comment to a post
-  async addComment(postId: number, createCommentDto: CreateCommentDto): Promise<Comment> {
+  @LogMethod()
+  async addComment(
+    postId: string,
+    createCommentDto: CreateCommentDto,
+    userId: string,
+  ): Promise<Comment> {
     const post = await this.findOnePost(postId);
-    const comment = this.commentRepository.create({ ...createCommentDto, post });
+    const comment = this.commentRepository.create({
+      ...createCommentDto,
+      userId,
+      post,
+    });
     return this.commentRepository.save(comment);
   }
 
   // Update a post
-  async updatePost(id: number, updatePostDto: CreatePostDto): Promise<Post> {
+  @LogMethod()
+  async updatePost(
+    id: string,
+    userId: string,
+    updatePostDto: CreatePostDto,
+  ): Promise<Post> {
     const post = await this.findOnePost(id);
-    this.postRepository.merge(post, updatePostDto);
+
+    if (post.userId !== userId) {
+      throw new ForbiddenException('You can only edit your own posts');
+    }
+
+    this.postRepository.merge(post, {
+      ...updatePostDto,
+      isEdited: true,
+    });
     return this.postRepository.save(post);
   }
 
   // Delete a post
-  async deletePost(id: number): Promise<void> {
+  @LogMethod()
+  async deletePost(id: string): Promise<void> {
     const result = await this.postRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Post not found');

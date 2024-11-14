@@ -1,9 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.setGlobalPrefix('api/');
+  initGlobalMiddleware(app);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -12,7 +18,7 @@ async function bootstrap() {
     }),
   );
   const config = new DocumentBuilder()
-    .setTitle('Atoa Reviews Service')
+    .setTitle('Post comments service')
     .setVersion('0.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
@@ -22,3 +28,15 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
+
+function initGlobalMiddleware(app: NestExpressApplication) {
+  app.use(helmet());
+  const corsUrisString = process.env.CORS_URIS;
+  const corsUris = [];
+  if (corsUrisString) {
+    corsUrisString.split(',').forEach((url) => {
+      corsUris.push(url);
+    });
+  }
+  app.enableCors({ origin: corsUris, credentials: true });
+}
