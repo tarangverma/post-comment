@@ -1,6 +1,6 @@
 # Blog Post & Comments API
 
-A NestJS-based REST API that allows users to create, read, update, and delete blog posts and comments. This service provides a foundation for a blogging platform with structured data management and API documentation.
+A simple post-comments API service that allows users to create, read, update, and delete blog posts and comments.
 
 ## Features
 
@@ -11,6 +11,73 @@ A NestJS-based REST API that allows users to create, read, update, and delete bl
 - Logging with Pino
 - Security middleware (Helmet, CORS)
 - TypeORM for database management
+
+## Project Architecture
+
+This project follows a clean, modular architecture based on NestJS framework principles:
+
+### Core Components
+
+1. **Controllers Layer (`src/*/controller.ts`)**
+   - Handles HTTP requests and responses
+   - Routes requests to appropriate service methods
+   - Performs request validation using DTOs
+   - Implements Swagger documentation
+
+2. **Services Layer (`src/*/service.ts`)**
+   - Contains business logic
+   - Interacts with repositories
+   - Handles data transformation
+   - Implements error handling
+
+3. **Entities Layer (`src/*/entities/*.entity.ts`)**
+   - Defines database models
+   - Contains TypeORM decorators for database mapping
+   - Implements relationships between entities
+
+4. **DTOs Layer (`src/*/dto/*.dto.ts`)**
+   - Defines data transfer objects
+   - Implements validation rules
+   - Handles data serialization/deserialization
+   - Documents API request/response structures
+
+### Project Structure
+
+```
+src/
+├── database/           # Database configuration
+├── decorators/         # Custom decorators
+├── post/              # Post module
+│   ├── dto/           # Data Transfer Objects
+│   ├── entities/      # Database entities
+│   ├── post.controller.ts
+│   ├── posts.service.ts
+│   └── posts.module.ts
+└── main.ts            # Application entry point
+```
+
+### Key Design Patterns
+
+- **Repository Pattern**: Using TypeORM repositories for data access
+- **Dependency Injection**: NestJS's built-in DI container
+- **DTO Pattern**: For request/response data validation and transformation
+- **Decorator Pattern**: For method logging and Swagger documentation
+
+### Security Features
+
+- Helmet middleware for HTTP headers security
+- CORS configuration
+- Request validation
+- Data sanitization
+
+### Database Design
+
+- PostgreSQL as the primary database
+- TypeORM for object-relational mapping
+- Migrations for version control of database schema
+- Relationships:
+  - One-to-Many between Post and Comments
+  - Future extensibility for user relationships
 
 ## Prerequisites
 
@@ -27,7 +94,7 @@ A NestJS-based REST API that allows users to create, read, update, and delete bl
 DB_HOST=localhost
 DB_USER=your_username
 DB_PASSWORD=your_password
-DB_NAME=post_service_db_
+DB_NAME=post_service_db
 DB_PORT=5432
 PORT=3000
 ```
@@ -60,7 +127,7 @@ docker run -d -v postgresqldata:/data/db -e POSTGRES_PASSWORD=postgres --name po
 2. Create a new database:
 
 ```sql
-CREATE DATABASE blog_db;
+CREATE DATABASE post_service_db;
 ```
 
 ## Installation
@@ -143,70 +210,3 @@ The following features could be implemented to enhance the application:
 - Post reactions (likes, bookmarks)
 - Search functionality
 - Notification system
-
-## Project Architecture
-
-This project follows a clean, modular architecture based on NestJS framework principles:
-
-### Core Components
-
-1. **Controllers Layer (`src/*/controller.ts`)**
-   - Handles HTTP requests and responses
-   - Routes requests to appropriate service methods
-   - Performs request validation using DTOs
-   - Implements Swagger documentation
-
-2. **Services Layer (`src/*/service.ts`)**
-   - Contains business logic
-   - Interacts with repositories
-   - Handles data transformation
-   - Implements error handling
-
-3. **Entities Layer (`src/*/entities/*.entity.ts`)**
-   - Defines database models
-   - Contains TypeORM decorators for database mapping
-   - Implements relationships between entities
-
-4. **DTOs Layer (`src/*/dto/*.dto.ts`)**
-   - Defines data transfer objects
-   - Implements validation rules
-   - Handles data serialization/deserialization
-   - Documents API request/response structures
-
-### Project Structure
-
-```
-src/
-├── database/           # Database configuration
-├── decorators/         # Custom decorators
-├── post/              # Post module
-│   ├── dto/           # Data Transfer Objects
-│   ├── entities/      # Database entities
-│   ├── post.controller.ts
-│   ├── posts.service.ts
-│   └── posts.module.ts
-└── main.ts            # Application entry point
-```
-
-### Key Design Patterns
-
-- **Repository Pattern**: Using TypeORM repositories for data access
-- **Dependency Injection**: NestJS's built-in DI container
-- **DTO Pattern**: For request/response data validation and transformation
-- **Decorator Pattern**: For method logging and Swagger documentation
-
-### Security Features
-
-- Helmet middleware for HTTP headers security
-- CORS configuration
-- Request validation
-- Data sanitization
-
-### Database Design
-
-- PostgreSQL as the primary database
-- TypeORM for object-relational mapping
-- Migrations for version control of database schema
-- Relationships:
-  - One-to-Many between Post and Comments
-  - Future extensibility for user relationships
