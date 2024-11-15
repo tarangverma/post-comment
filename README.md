@@ -1,99 +1,212 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Blog Post & Comments API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based REST API that allows users to create, read, update, and delete blog posts and comments. This service provides a foundation for a blogging platform with structured data management and API documentation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- CRUD operations for posts and comments
+- Data validation and serialization
+- Swagger API documentation
+- PostgreSQL database integration
+- Logging with Pino
+- Security middleware (Helmet, CORS)
+- TypeORM for database management
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Project setup
+- Node.js (v16 or later)
+- PostgreSQL (v14 or later)
+- Docker (optional, for containerization)
 
-```bash
-$ npm install
+## Environment Setup
+
+1. Create a `.env` file in the root directory with the following variables:
+
+#### Database Configuration
+```.env
+DB_HOST=localhost
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=post_service_db_
+DB_PORT=5432
+PORT=3000
 ```
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+#### Application Configuration
+```.env
+NODE_ENV=development
+PORT=3000
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+#### CORS Configuration (comma-separated URLs)
+```.env
+CORS_URIS=http://localhost:3000
 ```
 
-## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Database Setup
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Using Docker (Recommended)
+
+1. Start PostgreSQL using Docker:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+docker run -d -v postgresqldata:/data/db -e POSTGRES_PASSWORD=postgres --name postgres -p 5432:5432 postgres
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Manual Setup
 
-## Resources
+1. Install PostgreSQL on your system
+2. Create a new database:
 
-Check out a few resources that may come in handy when working with NestJS:
+```sql
+CREATE DATABASE blog_db;
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Installation
 
-## Support
+#### Install dependencies
+```bash
+npm install
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### Generate TypeORM migrations
 
-## Stay in touch
+TypeORM is able to automatically generate migration files with schema changes you made
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Let's say you have a Post entity with a title column, and you have changed the name title to name. You can run following command:
 
-## License
+```bash
+npm run db:migration:generate src/migrations/${migration_name}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+PS: Please use CamelCase for the migration name starting with a uppercase letter
+
+#### Run migrations
+
+```bash
+npm run db:migrations:run
+```
+
+###### Revert migration
+
+```bash
+npm run db:migrations:revert
+```
+
+#### Start the application
+
+```bash
+npm run start:dev
+```
+
+
+## API Documentation
+
+The API documentation is available through Swagger UI at the root path (`/`). After starting the application, visit:
+
+http://localhost:3000/
+
+
+## Available Endpoints
+
+### Posts
+
+- `POST /api/:userId/posts` - Create a new post
+- `GET /api/:userId/posts` - Get all posts for a user
+- `GET /api/:userId/posts/:id` - Get a specific post
+- `PUT /api/:userId/posts/:id` - Update a post
+- `DELETE /api/:userId/posts/:id` - Delete a post
+
+### Comments
+
+- `POST /api/:userId/posts/:postId/comments` - Add a comment to a post
+- `PUT /api/:userId/posts/:postId/comments/:commentId` - Update a comment
+
+
+## Future Improvements
+
+The following features could be implemented to enhance the application:
+
+### User Module
+- User registration and profile management
+- Email verification
+- Password reset functionality
+
+### Authentication & Authorization
+- JWT-based authentication
+- Session management
+
+### Additional Features
+- Post categories and tags
+- Image upload support
+- Post reactions (likes, bookmarks)
+- Search functionality
+- Notification system
+
+## Project Architecture
+
+This project follows a clean, modular architecture based on NestJS framework principles:
+
+### Core Components
+
+1. **Controllers Layer (`src/*/controller.ts`)**
+   - Handles HTTP requests and responses
+   - Routes requests to appropriate service methods
+   - Performs request validation using DTOs
+   - Implements Swagger documentation
+
+2. **Services Layer (`src/*/service.ts`)**
+   - Contains business logic
+   - Interacts with repositories
+   - Handles data transformation
+   - Implements error handling
+
+3. **Entities Layer (`src/*/entities/*.entity.ts`)**
+   - Defines database models
+   - Contains TypeORM decorators for database mapping
+   - Implements relationships between entities
+
+4. **DTOs Layer (`src/*/dto/*.dto.ts`)**
+   - Defines data transfer objects
+   - Implements validation rules
+   - Handles data serialization/deserialization
+   - Documents API request/response structures
+
+### Project Structure
+
+```
+src/
+├── database/           # Database configuration
+├── decorators/         # Custom decorators
+├── post/              # Post module
+│   ├── dto/           # Data Transfer Objects
+│   ├── entities/      # Database entities
+│   ├── post.controller.ts
+│   ├── posts.service.ts
+│   └── posts.module.ts
+└── main.ts            # Application entry point
+```
+
+### Key Design Patterns
+
+- **Repository Pattern**: Using TypeORM repositories for data access
+- **Dependency Injection**: NestJS's built-in DI container
+- **DTO Pattern**: For request/response data validation and transformation
+- **Decorator Pattern**: For method logging and Swagger documentation
+
+### Security Features
+
+- Helmet middleware for HTTP headers security
+- CORS configuration
+- Request validation
+- Data sanitization
+
+### Database Design
+
+- PostgreSQL as the primary database
+- TypeORM for object-relational mapping
+- Migrations for version control of database schema
+- Relationships:
+  - One-to-Many between Post and Comments
+  - Future extensibility for user relationships
