@@ -10,6 +10,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { LogMethod } from '../decorators/log-method.decorator';
+import { PostDto } from './dto/post.dto';
 
 @Injectable()
 export class PostService {
@@ -23,18 +24,20 @@ export class PostService {
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,
-  ): Promise<Post> {
+  ): Promise<PostDto> {
     const post = this.postRepository.create({
       ...createPostDto,
       userId,
     });
-    return this.postRepository.save(post);
+    const savedPost = await this.postRepository.save(post);
+    return new PostDto(savedPost);
   }
 
   // Retrieve all posts
   @LogMethod()
-  async findAllPosts(): Promise<Post[]> {
-    return this.postRepository.find({
+  async findAllPosts(userId: string): Promise<PostDto[]> {
+    const posts = await this.postRepository.find({
+      where: { userId },
       relations: ['comments'],
       order: {
         createdAt: 'DESC',
@@ -43,11 +46,12 @@ export class PostService {
         },
       },
     });
+    return posts.map((post) => new PostDto(post));
   }
 
   // Retrieve a single post by ID
   @LogMethod()
-  async findOnePost(id: string): Promise<Post> {
+  async findOnePost(id: string, userId: string): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: ['comments'],
@@ -61,6 +65,9 @@ export class PostService {
     if (!post) {
       throw new NotFoundException('Post not found');
     }
+    if (post.userId !== userId) {
+      throw new ForbiddenException('You can only view your own posts');
+    }
     return post;
   }
 
@@ -71,7 +78,7 @@ export class PostService {
     createCommentDto: CreateCommentDto,
     userId: string,
   ): Promise<Comment> {
-    const post = await this.findOnePost(postId);
+    const post = await this.findOnePost(postId, userId);
     const comment = this.commentRepository.create({
       ...createCommentDto,
       userId,
@@ -86,8 +93,8 @@ export class PostService {
     id: string,
     userId: string,
     updatePostDto: CreatePostDto,
-  ): Promise<Post> {
-    const post = await this.findOnePost(id);
+  ): Promise<PostDto> {
+    const post = await this.findOnePost(id, userId);
 
     if (post.userId !== userId) {
       throw new ForbiddenException('You can only edit your own posts');
@@ -97,15 +104,46 @@ export class PostService {
       ...updatePostDto,
       isEdited: true,
     });
-    return this.postRepository.save(post);
+    const updatedPost = await this.postRepository.save(post);
+    return new PostDto(updatedPost);
   }
 
   // Delete a post
   @LogMethod()
-  async deletePost(id: string): Promise<void> {
+  async deletePost(id: string, userId: string): Promise<void> {
+    const post = await this.findOnePost(id, userId);
+    if (post.userId !== userId) {
+      throw new ForbiddenException('You can only delete your own posts');
+    }
     const result = await this.postRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Post not found');
     }
+  }
+
+  // New method for editing comments
+  @LogMethod()
+  async updateComment(
+    postId: string,
+    commentId: string,
+    userId: string,
+    content: string,
+  ): Promise<Comment> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId, post: { id: postId } },
+    });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment.userId !== userId) {
+      throw new ForbiddenException('You can only edit your own comments');
+    }
+
+    comment.text = content;
+    comment.isEdited = true;
+
+    return this.commentRepository.save(comment);
   }
 }
