@@ -34,7 +34,15 @@ export class PostService {
   // Retrieve all posts
   @LogMethod()
   async findAllPosts(): Promise<Post[]> {
-    return this.postRepository.find({ relations: ['comments'] });
+    return this.postRepository.find({
+      relations: ['comments'],
+      order: {
+        createdAt: 'DESC',
+        comments: {
+          createdAt: 'DESC',
+        },
+      },
+    });
   }
 
   // Retrieve a single post by ID
@@ -43,6 +51,12 @@ export class PostService {
     const post = await this.postRepository.findOne({
       where: { id },
       relations: ['comments'],
+      order: {
+        createdAt: 'DESC',
+        comments: {
+          createdAt: 'DESC',
+        },
+      },
     });
     if (!post) {
       throw new NotFoundException('Post not found');

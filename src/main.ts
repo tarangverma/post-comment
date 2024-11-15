@@ -23,14 +23,25 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api/v1/docs/', app, document);
+  SwaggerModule.setup('/', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 
 function initGlobalMiddleware(app: NestExpressApplication) {
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [`'self'`],
+          styleSrc: [`'self'`, `'unsafe-inline'`],
+          imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+        },
+      },
+    }),
+  );
   const corsUrisString = process.env.CORS_URIS;
   const corsUris = [];
   if (corsUrisString) {
