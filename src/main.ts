@@ -5,9 +5,12 @@ import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: console,
+  });
   app.setGlobalPrefix('api/');
   initGlobalMiddleware(app);
   app.useGlobalPipes(
@@ -30,6 +33,7 @@ async function bootstrap() {
 bootstrap();
 
 function initGlobalMiddleware(app: NestExpressApplication) {
+  app.useLogger(app.get(Logger));
   app.use(
     helmet({
       contentSecurityPolicy: {
