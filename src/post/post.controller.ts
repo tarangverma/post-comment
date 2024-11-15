@@ -16,10 +16,20 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PostDto } from './dto/post.dto';
 import { CommentDto } from './dto/comment.dto';
 
+/**
+ * Controller responsible for handling post-related HTTP requests
+ * Manages operations for posts and their comments
+ */
 @Controller('/')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  /**
+   * Creates a new post for a specific user
+   * @param userId - The UUID of the user creating the post
+   * @param createPostDto - The data for creating the post
+   * @returns Promise containing the created post
+   */
   @ApiTags('Posts')
   @ApiOperation({ summary: 'Create a post' })
   @Post('/:userId/posts')
@@ -30,6 +40,11 @@ export class PostController {
     return this.postService.createPost(createPostDto, userId);
   }
 
+  /**
+   * Retrieves all posts for a specific user
+   * @param userId - The UUID of the user whose posts to retrieve
+   * @returns Promise containing an array of posts
+   */
   @ApiTags('Posts')
   @ApiOperation({ summary: 'Get all posts' })
   @Get('/:userId/posts')
@@ -39,6 +54,12 @@ export class PostController {
     return this.postService.findAllPosts(userId);
   }
 
+  /**
+   * Retrieves a specific post by its ID
+   * @param userId - The UUID of the user who owns the post
+   * @param id - The UUID of the post to retrieve
+   * @returns Promise containing the requested post
+   */
   @ApiTags('Posts')
   @ApiOperation({ summary: 'Get a post by id' })
   @Get('/:userId/posts/:id')
@@ -49,6 +70,13 @@ export class PostController {
     return this.postService.findOnePost(id, userId);
   }
 
+  /**
+   * Updates an existing post
+   * @param id - The UUID of the post to update
+   * @param updatePostDto - The updated post data
+   * @param userId - The UUID of the user who owns the post
+   * @returns Promise containing the updated post
+   */
   @ApiTags('Posts')
   @ApiOperation({ summary: 'Update a post' })
   @Put('/:userId/posts/:id')
@@ -60,6 +88,12 @@ export class PostController {
     return this.postService.updatePost(id, userId, updatePostDto);
   }
 
+  /**
+   * Deletes a specific post
+   * @param userId - The UUID of the user who owns the post
+   * @param id - The UUID of the post to delete
+   * @returns Promise that resolves when the post is deleted
+   */
   @ApiTags('Posts')
   @ApiOperation({ summary: 'Delete a post' })
   @Delete('/:userId/posts/:id')
@@ -70,6 +104,13 @@ export class PostController {
     return this.postService.deletePost(id, userId);
   }
 
+  /**
+   * Adds a comment to a specific post
+   * @param userId - The UUID of the user creating the comment
+   * @param postId - The UUID of the post to comment on
+   * @param createCommentDto - The data for creating the comment
+   * @returns Promise containing the created comment
+   */
   @ApiTags('Comments')
   @ApiOperation({ summary: 'Add a comment to a post' })
   @Post('/:userId/posts/:postId/comments')
@@ -81,6 +122,14 @@ export class PostController {
     return this.postService.addComment(postId, createCommentDto, userId);
   }
 
+  /**
+   * Updates an existing comment
+   * @param userId - The UUID of the user who owns the comment
+   * @param postId - The UUID of the post containing the comment
+   * @param commentId - The UUID of the comment to update
+   * @param updateCommentDto - The updated comment data
+   * @returns Promise containing the updated comment
+   */
   @ApiTags('Comments')
   @ApiOperation({ summary: 'Edit a comment' })
   @Put('/:userId/posts/:postId/comments/:commentId')

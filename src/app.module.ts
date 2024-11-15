@@ -4,13 +4,23 @@ import { PostModule } from './post/posts.module';
 import { typeOrmConfig } from './database/database.source';
 import { LoggerModule } from 'nestjs-pino';
 
+/**
+ * Root module of the NestJS application
+ * Configures TypeORM database connection and Pino logging
+ */
 @Module({
   imports: [
+    // Configure TypeORM with database connection settings
     TypeOrmModule.forRoot(typeOrmConfig),
+
+    // Configure Pino logger with custom settings
     LoggerModule.forRoot({
       pinoHttp: {
+        // Set logging level to 'info'
         level: 'info',
+        // Add ISO timestamp to each log entry
         timestamp: () => `,"time":"${new Date().toISOString()}Z"`,
+        // Custom serializers for request and response logging
         serializers: {
           req: (req) => {
             return {
@@ -33,11 +43,6 @@ import { LoggerModule } from 'nestjs-pino';
         },
         formatters: {
           level: (label) => ({ level: label.toUpperCase() }),
-        },
-        autoLogging: {
-          ignore: (req) => {
-            return ['/health'].some((e) => req.url.includes(e));
-          },
         },
       },
     }),
