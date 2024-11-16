@@ -212,13 +212,15 @@ The following features could be implemented to enhance the application:
 - Notification system
 
 ## SWAGGER UI : 
-### http://localhost:3000
-- ![API](<Screenshot (1234).png>)
-- ![API](<Screenshot (1235).png>)
+http://localhost:3000
+
+ ![API](<Screenshot (1234).png>)
+ ![API](<Screenshot (1235).png>)
 
 ## Examples
-### API ENDPOINT: http://localhost:3000/api/22b568bf-1a58-4f7e-9119-efcdb4946bee/posts
-### RESPONSE(JSON)
+API ENDPOINT: http://localhost:3000/api/22b568bf-1a58-4f7e-9119-efcdb4946bee/posts
+
+RESPONSE(JSON)
 ```
 [
   {
