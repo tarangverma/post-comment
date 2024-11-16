@@ -211,7 +211,7 @@ The following features could be implemented to enhance the application:
 - Search functionality
 - Notification system
 
-## SWAGGER UI : 
+## SWAGGER API DOCS : 
 http://localhost:3000
 
  ![API](<Screenshot (1234).png>)
