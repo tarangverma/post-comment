@@ -210,3 +210,54 @@ The following features could be implemented to enhance the application:
 - Post reactions (likes, bookmarks)
 - Search functionality
 - Notification system
+
+## SWAGGER UI : 
+### http://localhost:3000
+- ![API](<Screenshot (1234).png>)
+- ![API](<Screenshot (1235).png>)
+
+## Examples
+### API ENDPOINT: http://localhost:3000/api/22b568bf-1a58-4f7e-9119-efcdb4946bee/posts
+### RESPONSE(JSON)
+```
+[
+  {
+    "id": "ab445e5a-29d7-4687-8149-8d6d4e5d057d",
+    "title": "post 1",
+    "content": "this is my first post",
+    "createdAt": "2024-11-16T01:17:12.722Z",
+    "updatedAt": "2024-11-16T01:17:12.722Z",
+    "userId": "22b568bf-1a58-4f7e-9119-efcdb4946bee",
+    "isEdited": false,
+    "comments": [
+      {
+        "id": "e71c8169-e22d-483c-b0d5-2501195bc07e",
+        "text": "This is a link <a href='www.google.com' target='_blank'>www.google.com</a>",
+        "createdAt": "2024-11-16T01:51:40.339Z",
+        "updatedAt": "2024-11-16T01:51:40.339Z",
+        "userId": "22b568bf-1a58-4f7e-9119-efcdb4946bee",
+        "isEdited": false,
+        "postId": "ab445e5a-29d7-4687-8149-8d6d4e5d057d"
+      },
+      {
+        "id": "49be1676-2321-4d43-9850-541501eccab7",
+        "text": "This comment is in 𝘐𝘛𝘈𝘓𝘐𝘊 😁",
+        "createdAt": "2024-11-16T01:44:22.886Z",
+        "updatedAt": "2024-11-16T01:44:22.886Z",
+        "userId": "22b568bf-1a58-4f7e-9119-efcdb4946bee",
+        "isEdited": false,
+        "postId": "ab445e5a-29d7-4687-8149-8d6d4e5d057d"
+      },
+      {
+        "id": "7e78a55b-dc5b-4618-9901-eda09b80a601",
+        "text": "This comment is in 𝗕𝗢𝗟𝗗",
+        "createdAt": "2024-11-16T01:42:15.600Z",
+        "updatedAt": "2024-11-16T01:42:15.600Z",
+        "userId": "22b568bf-1a58-4f7e-9119-efcdb4946bee",
+        "isEdited": false,
+        "postId": "ab445e5a-29d7-4687-8149-8d6d4e5d057d"
+      }
+    ]
+  }
+]
+```

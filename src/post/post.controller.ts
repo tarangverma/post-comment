@@ -20,6 +20,7 @@ import { CommentDto } from './dto/comment.dto';
  * Controller responsible for handling post-related HTTP requests
  * Manages operations for posts and their comments
  */
+@ApiTags('ALL')
 @Controller('/')
 export class PostController {
   constructor(private readonly postService: PostService) {}
